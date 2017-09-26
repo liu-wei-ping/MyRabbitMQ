@@ -1,7 +1,5 @@
 package com.rabbitmq.mq.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -21,8 +19,6 @@ import org.springframework.context.annotation.Scope;
 public class RabbitMqConfig {
 	@Value("${spring.rabbitmq.host}")
 	private String host;
-	/** 日志类 */
-	private final Logger logger = LoggerFactory.getLogger(super.getClass());
 	@Value("${spring.rabbitmq.password}")
 	private String password;
 	@Value("${spring.rabbitmq.port}")
@@ -50,17 +46,22 @@ public class RabbitMqConfig {
 	}
 
 
-
-
+	// @Bean
+	// public MessageListenerAdapter messageListenerAdapter() {
+	// MessageListenerAdapter messageListenerAdapter = new
+	// MessageListenerAdapter();
+	// ReceiveMsgHandler receiveMsgHandler = new ReceiveMsgHandler();
+	// messageListenerAdapter.setDelegate(receiveMsgHandler);
+	// return messageListenerAdapter;
+	// }
 
 	@Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setMessageConverter(new Jackson2JsonMessageConverter());
-        return factory;
-    }
-
+	public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
+		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+		factory.setConnectionFactory(connectionFactory());
+		factory.setMessageConverter(new Jackson2JsonMessageConverter());
+		return factory;
+	}
 
 	/**
 	 * 因为要设置回调类，所以应是prototype类型，如果是singleton类型，则回调类为最后一次设置
@@ -73,6 +74,9 @@ public class RabbitMqConfig {
 	public RabbitTemplate rabbitTemplatenew() {
 		RabbitTemplate template = new RabbitTemplate(connectionFactory());
 		template.setMessageConverter(new Jackson2JsonMessageConverter());
+		// AsyncRabbitTemplate cc = new AsyncRabbitTemplate(template,
+		// messageContainer());
+		// template.setConfirmCallback(confirmCallback());
 		return template;
 	}
 }
