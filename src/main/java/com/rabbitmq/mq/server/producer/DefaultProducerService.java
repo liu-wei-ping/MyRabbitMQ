@@ -29,7 +29,7 @@ public class DefaultProducerService extends BaseProducerService
 			// asyncRabbitTemplate.convertSendAndReceive(MqConstantConfig.DIRECT_EXCHANGE_NAME,
 			// MqConstantConfig.DIRECT_ROUTING_KEY, message.getMsgObj());
 			rabbitTemplate.convertAndSend(MqConstantConfig.DIRECT_EXCHANGE_NAME, MqConstantConfig.DIRECT_ROUTING_KEY,
-					message.getMsgObj(), correlationId);
+					String.valueOf(message.getMsgObj()), correlationId);
 		} catch (ListenerExecutionFailedException e) {
 			String error = this.getStackTrace(e);
 			return ReturnObject.generateFailedObject(error, message);
